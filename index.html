@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Deeper.id API Status</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { background: rgba(30, 41, 59, 0.7); backdrop-filter: blur(10px); }
+        .status-dot { height: 10px; width: 10px; border-radius: 50%; display: inline-block; }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 min-h-screen">
+
+    <div class="container mx-auto px-4 py-8 max-w-4xl">
+        <!-- Header -->
+        <header class="flex justify-between items-center mb-10 border-b border-slate-700 pb-6">
+            <div>
+                <h1 class="text-3xl font-bold bg-clip-text text-transparent bg-gradient-to-r from-blue-400 to-teal-400">
+                    Deeper.id API
+                </h1>
+                <p class="text-slate-400 mt-1">Unofficial Scraper & Data Provider</p>
+            </div>
+            <div id="server-status" class="flex items-center gap-2 px-4 py-2 rounded-full bg-slate-800 border border-slate-700">
+                <span class="status-dot bg-gray-500 animate-pulse"></span>
+                <span class="text-sm font-medium">Checking...</span>
+            </div>
+        </header>
+
+        <!-- Stats Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            <!-- Cache Status -->
+            <div class="glass p-6 rounded-xl border border-slate-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Cache Status</h3>
+                    <i class="fa-solid fa-database text-blue-400"></i>
+                </div>
+                <p id="cache-state" class="text-2xl font-bold text-white">--</p>
+                <p id="cache-time" class="text-xs text-slate-500 mt-2">Last Update: --</p>
+            </div>
+
+            <!-- Total Dramas -->
+            <div class="glass p-6 rounded-xl border border-slate-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Total Drama</h3>
+                    <i class="fa-solid fa-film text-purple-400"></i>
+                </div>
+                <p id="total-dramas" class="text-2xl font-bold text-white">--</p>
+                <p class="text-xs text-slate-500 mt-2">Items in memory</p>
+            </div>
+
+            <!-- Response Time -->
+            <div class="glass p-6 rounded-xl border border-slate-700">
+                <div class="flex items-center justify-between mb-4">
+                    <h3 class="text-slate-400 text-sm font-semibold uppercase tracking-wider">Latency</h3>
+                    <i class="fa-solid fa-bolt text-yellow-400"></i>
+                </div>
+                <p id="latency" class="text-2xl font-bold text-white">-- ms</p>
+                <p class="text-xs text-slate-500 mt-2">Client to Server</p>
+            </div>
+        </div>
+
+        <!-- Endpoints Section -->
+        <div class="glass rounded-xl border border-slate-700 overflow-hidden mb-10">
+            <div class="bg-slate-800/50 px-6 py-4 border-b border-slate-700">
+                <h2 class="text-lg font-semibold text-white">Available Endpoints</h2>
+            </div>
+            <div class="p-6 space-y-4">
+                
+                <!-- Endpoint 1 -->
+                <div class="group relative bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 hover:border-blue-500/50 transition-colors">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded">GET</span>
+                            <code class="text-blue-300 font-mono text-sm">/api/dramas</code>
+                        </div>
+                        <p class="text-sm text-slate-400">Mengambil semua data drama (Auto-scrape/Cache).</p>
+                        <a href="/api/dramas" target="_blank" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                            Test Endpoint <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+                <!-- Endpoint 2 -->
+                <div class="group relative bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 hover:border-blue-500/50 transition-colors">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded">GET</span>
+                            <code class="text-blue-300 font-mono text-sm">/api/search?q={keyword}</code>
+                        </div>
+                        <p class="text-sm text-slate-400">Cari drama berdasarkan judul.</p>
+                        <div class="flex gap-2">
+                             <input type="text" id="test-search" placeholder="Coba: naga" class="bg-slate-900 border border-slate-700 rounded px-2 py-1 text-xs text-white focus:outline-none focus:border-blue-500">
+                             <button onclick="testSearch()" class="text-xs bg-blue-600 hover:bg-blue-500 px-3 py-1 rounded text-white">Cari</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Endpoint 3 -->
+                <div class="group relative bg-slate-800/30 p-4 rounded-lg border border-slate-700/50 hover:border-blue-500/50 transition-colors">
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div class="flex items-center gap-3">
+                            <span class="px-2 py-1 text-xs font-bold bg-green-500/20 text-green-400 rounded">GET</span>
+                            <code class="text-blue-300 font-mono text-sm">/api/status</code>
+                        </div>
+                        <p class="text-sm text-slate-400">Cek status teknis server (JSON).</p>
+                        <a href="/api/status" target="_blank" class="text-xs text-blue-400 hover:text-blue-300 flex items-center gap-1">
+                            Test Endpoint <i class="fa-solid fa-arrow-up-right-from-square"></i>
+                        </a>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="text-center text-slate-500 text-sm">
+            <p>&copy; 2024 Deeper.id Unofficial API. Built for educational purposes.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Fungsi untuk mengambil status server
+        async function fetchStatus() {
+            const startTime = Date.now();
+            const statusIndicator = document.querySelector('#server-status span:last-child');
+            const statusDot = document.querySelector('.status-dot');
+
+            try {
+                // Panggil endpoint /api/status (yang baru akan kita buat di server.js)
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                const latency = Date.now() - startTime;
+
+                // Update UI
+                if (response.ok) {
+                    statusIndicator.innerText = "Online";
+                    statusIndicator.classList.add('text-green-400');
+                    statusDot.classList.remove('bg-gray-500', 'animate-pulse');
+                    statusDot.classList.add('bg-green-500');
+
+                    document.getElementById('cache-state').innerText = data.cache_status || "Unknown";
+                    
+                    // Format tanggal
+                    const date = new Date(data.last_update);
+                    const formattedDate = !isNaN(date) ? date.toLocaleTimeString() : "Belum ada data";
+                    document.getElementById('cache-time').innerText = `Last Update: ${formattedDate}`;
+                    
+                    document.getElementById('latency').innerText = `${latency} ms`;
+
+                    // Panggil data count jika belum ada
+                    fetchTotalData();
+                }
+            } catch (error) {
+                statusIndicator.innerText = "Offline";
+                statusIndicator.classList.add('text-red-400');
+                statusDot.classList.remove('bg-gray-500');
+                statusDot.classList.add('bg-red-500');
+            }
+        }
+
+        async function fetchTotalData() {
+            try {
+                // Ambil info total data dari endpoint status jika ada, atau hit manual
+                // Kita akan update server.js agar /api/status mengirim total_data juga
+                const response = await fetch('/api/status');
+                const data = await response.json();
+                if(data.total_items !== undefined) {
+                    document.getElementById('total-dramas').innerText = data.total_items;
+                } else {
+                    document.getElementById('total-dramas').innerText = "-";
+                }
+            } catch (e) {
+                console.log(e);
+            }
+        }
+
+        function testSearch() {
+            const query = document.getElementById('test-search').value;
+            if(!query) return;
+            window.open(`/api/search?q=${query}`, '_blank');
+        }
+
+        // Jalankan saat load
+        fetchStatus();
+    </script>
+</body>
+</html>
